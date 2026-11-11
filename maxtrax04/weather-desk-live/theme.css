@@ -1,0 +1,106 @@
+/* Weather Desk Live: Weather Desk as one on-air picture, without boxes */
+@import url("../weather-desk/theme.css");
+
+/* ---- One picture: the panels lose their boxes and sit on the studio background ---------- */
+body {
+    background:
+        radial-gradient(ellipse 60% 45% at 28% 42%, rgba(90, 160, 255, 0.28), transparent 70%),
+        linear-gradient(115deg, transparent 30%, rgba(120, 180, 255, 0.10) 48%, transparent 62%),
+        radial-gradient(ellipse at 50% 0%, #1d58b0, transparent 75%),
+        linear-gradient(to bottom, #0c2d6b, #071a42 70%, var(--bg));
+    background-attachment: fixed;
+}
+.panel {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 6px 18px;
+    margin-bottom: 10px;
+}
+
+/* ---- Top: the station logo and the place, straight on the picture ---------------------- */
+.header {
+    background: none;
+    border: 0;
+    overflow: visible;
+    padding: 6px 18px;
+}
+.title { border-radius: 2px; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4); }
+.header .location { font-size: clamp(1.8rem, 4vw, 3.2rem); }
+
+/* ---- Now: the temperature large and floating, the readings as a quiet list -------------- */
+.panel[data-panel="current"] { padding-top: 34px; }
+.panel[data-panel="current"]::before {
+    content: "Right now";
+    top: 0;
+    left: 18px;
+    padding: 0;
+    background: none;
+    clip-path: none;
+    color: var(--accent);
+    font-size: 1.1em;
+    letter-spacing: 0.2em;
+}
+.temperature {
+    font-size: clamp(5rem, 14vw, 11rem);
+    text-shadow: 4px 6px 0 rgba(0, 10, 40, 0.5), 0 0 40px rgba(90, 160, 255, 0.35);
+}
+.condition {
+    background: none;
+    border-left: 0;
+    padding: 0;
+    color: var(--accent);
+    text-shadow: var(--shadow);
+}
+.details { gap: 4px 28px; }
+.detail-box {
+    border: 0;
+    border-bottom: 1px solid rgba(160, 200, 255, 0.18);
+    border-radius: 0;
+    background: none;
+    padding: 6px 0 8px;
+}
+.detail-box span { font-size: 1.6rem; }
+
+/* ---- Forecast: days side by side, divided by fine lines, no cards ---------------------- */
+.panel[data-panel="forecast"] h2 {
+    background: none;
+    clip-path: none;
+    padding: 0;
+    margin-bottom: 6px;
+    color: var(--accent);
+    font-size: 1.1em;
+    letter-spacing: 0.2em;
+}
+.forecast { gap: 0; }
+.forecast-card {
+    border: 0;
+    border-left: 1px solid rgba(160, 200, 255, 0.2);
+    border-radius: 0;
+    background: none;
+    padding: 4px 0 12px;
+}
+.forecast-card:first-child { border-left: 0; }
+.forecast-day {
+    background: none;
+    padding: 2px 4px 4px;
+    color: var(--accent);
+    font-size: 1.35rem;
+    text-shadow: var(--shadow);
+}
+.forecast-temps { font-size: 2.3rem; }
+.forecast-card::after {
+    left: 20%;
+    width: calc(var(--wx-rain, 0) * 60%);
+    height: 4px;
+    border-radius: 2px;
+}
+
+footer { opacity: 0.7; }
+
+@media (orientation: portrait), (max-width: 699px) {
+    .forecast-card { border-left: 0; border-top: 1px solid rgba(160, 200, 255, 0.2); }
+    .forecast-card:first-child { border-top: 0; }
+    .forecast-card::after { left: 0; width: calc(var(--wx-rain, 0) * 100%); }
+}

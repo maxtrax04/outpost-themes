@@ -1,0 +1,439 @@
+/* Weather Desk: the forecast segment of a local evening newscast */
+:root {
+    --bg: #061634;
+    --bg-glow: rgba(60, 130, 230, 0.18);
+    --panel: rgba(16, 52, 120, 0.92);
+    --cell-bg: rgba(255, 255, 255, 0.06);
+
+    --text: #ffffff;
+    --text-dim: #a9c2e8;
+    --accent: #ffc83d;
+    --warn: #ffb000;
+    --danger: #e3262f;
+    --danger-bg: rgba(150, 18, 24, 0.85);
+
+    --border: rgba(140, 190, 255, 0.45);
+    --border-width: 1px;
+    --radius: 4px;
+
+    --text-glow: none;
+    --icon-glow: drop-shadow(2px 3px 0 rgba(0, 10, 40, 0.55));
+    --scanlines: 0;
+
+    /* No font files: these are system fonts, so each device uses the first one it has */
+    --font-display: "Franklin Gothic Medium", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Helvetica Neue", Arial, "Segoe UI", sans-serif;
+    --title-spacing: 0.08em;
+    --title-logo: 1;
+
+    /* Graphics colors */
+    --gold-top: #ffd96a;
+    --gold-bottom: #e9a91a;
+    --navy: #04102a;
+    --shadow: 2px 2px 0 rgba(0, 10, 40, 0.6);
+
+    /* One screen, like a broadcast: fit the page to the screen and use the full width */
+    --fit-screen: 1;
+    --fit-width: 100vw;
+    --fit-max-scale: 2.5;
+
+    /* The ticker along the bottom of the screen */
+    --ticker-h: 46px;
+    --frame-inset: 0px;
+    --frame-inset-bottom: calc(var(--ticker-h) * var(--fit-scale, 1));
+}
+
+body {
+    background:
+        linear-gradient(115deg, transparent 35%, rgba(120, 180, 255, 0.10) 50%, transparent 65%),
+        radial-gradient(ellipse at 50% 0%, #1a4f9f, transparent 70%),
+        linear-gradient(to bottom, #0b2a64, var(--bg));
+    background-attachment: fixed;
+}
+
+h2,
+.condition,
+.forecast-day,
+.location {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ---- Panels: glossy blue graphics with a bright top edge ---------------------------- */
+.panel {
+    background: linear-gradient(to bottom, rgba(40, 92, 180, 0.95), rgba(14, 44, 104, 0.95));
+    border: 1px solid rgba(140, 190, 255, 0.35);
+    border-top: 2px solid rgba(190, 220, 255, 0.8);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    margin-bottom: 16px;
+}
+
+/* Section titles: a gold tab */
+h2 {
+    display: inline-block;
+    margin: 0 0 12px;
+    padding: 0.15em 1.4em 0.15em 0.7em;
+    background: linear-gradient(to bottom, var(--gold-top), var(--gold-bottom));
+    color: var(--navy);
+    letter-spacing: 0.08em;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 0.8em) 100%, 0 100%);
+}
+
+/* ---- Header: the station logo, then the place ---------------------------------------- */
+.header {
+    display: flex;
+    align-items: center;
+    gap: 0 1.2em;
+    flex-wrap: wrap;
+    padding: 0;
+    overflow: hidden;
+    text-align: left;
+    background: linear-gradient(to bottom, rgba(18, 52, 118, 0.96), rgba(8, 28, 72, 0.96));
+    border-bottom: 4px solid var(--gold-bottom);
+}
+.title {
+    align-self: stretch;
+    justify-content: center;
+    padding: 10px 1.6em 10px 1.1em;
+    background: linear-gradient(to bottom, #f0353d, #a8121a);
+    color: #ffffff;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 1.1em) 100%, 0 100%);
+}
+.header .title-logo { height: clamp(2.6rem, 5.5vw, 4rem); }
+.header .location {
+    margin: 0;
+    padding-block: 8px;
+    color: #ffffff;
+    text-shadow: var(--shadow);
+    font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+    letter-spacing: 0.03em;
+}
+.header .location::before {
+    content: "Local Forecast";
+    display: block;
+    font-size: 0.42em;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-shadow: none;
+}
+.header .subtitle {
+    margin-left: auto;
+    padding-right: 1.2em;
+    color: var(--text-dim);
+}
+
+/* ---- Current conditions --------------------------------------------------------------- */
+.panel[data-panel="current"] { padding-top: 52px; }
+.panel[data-panel="current"]::before {
+    content: "Current Conditions";
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    padding: 0.15em 1.4em 0.15em 0.7em;
+    background: linear-gradient(to bottom, var(--gold-top), var(--gold-bottom));
+    color: var(--navy);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.5em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 0.8em) 100%, 0 100%);
+}
+.temperature {
+    font-weight: 700;
+    text-shadow: 3px 4px 0 rgba(0, 10, 40, 0.6);
+}
+/* The condition as a lower third */
+.condition {
+    display: inline-block;
+    margin-top: 0.35em;
+    padding: 0.1em 1.2em 0.1em 0.5em;
+    background: linear-gradient(to bottom, rgba(4, 16, 42, 0.85), rgba(4, 16, 42, 0.6));
+    border-left: 6px solid var(--accent);
+    color: #ffffff;
+    font-size: clamp(1.2rem, 2.6vw, 2rem);
+    letter-spacing: 0.04em;
+}
+
+/* Readings: a label over a big value */
+.detail-box {
+    border: 0;
+    border-left: 4px solid var(--accent);
+    border-radius: 2px;
+    background: linear-gradient(to right, rgba(4, 16, 42, 0.55), rgba(4, 16, 42, 0.2));
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.detail-box span {
+    display: inline-block;
+    margin-top: 2px;
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    text-shadow: var(--shadow);
+}
+
+/* ---- Forecast: one column per day, a gold day bar on top ------------------------------ */
+.forecast-card {
+    overflow: hidden;
+    padding: 0 0 14px;
+    border: 1px solid rgba(140, 190, 255, 0.3);
+    background: linear-gradient(to bottom, rgba(4, 16, 42, 0.25), rgba(4, 16, 42, 0.6));
+}
+.forecast-day {
+    padding: 6px 4px;
+    background: linear-gradient(to bottom, var(--gold-top), var(--gold-bottom));
+    color: var(--navy);
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+}
+.forecast-condition {
+    color: var(--text-dim);
+    min-height: 2.6em;
+    padding-inline: 6px;
+}
+.forecast-temps {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    text-shadow: var(--shadow);
+}
+.forecast-extra {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+}
+/* Chance of rain as a bar along the bottom */
+.forecast-card::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 6px;
+    width: calc(var(--wx-rain, 0) * 100%);
+    background: linear-gradient(to right, #3fa3ff, #7cc4ff);
+}
+
+/* ---- Outpost's data warning ------------------------------------------------------------- */
+.panel.alert {
+    border: 0;
+    background: linear-gradient(to bottom, #d42029, #8e0f16);
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+/* ---- The ticker along the bottom of the screen ----------------------------------------
+   With alerts, the Alerts panel becomes a news ticker: a red "ALERTS" tag and the alerts sliding
+   past (--alert-chars, set by Outpost, keeps the speed readable). With none, the same bar holds a
+   quiet, still line: the Alerts panel's "no alerts" text (OUTPOST_ALERTS_ALWAYS_SHOW=true) or the
+   one-line note (false). The station logo sits at its right end. The page leaves room for the bar.
+   (Both are inside the scaled page, so their height grows with --fit-scale on its own.) */
+#alertsPanel:not([hidden]),
+#alertsStatus:not([hidden]) {
+    position: fixed;
+    z-index: 38;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--ticker-h);
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-top: 3px solid var(--gold-bottom);
+    border-radius: 0;
+    box-shadow: none;
+    background: linear-gradient(to bottom, #0c2456, var(--navy));
+}
+/* The station logo at the right end; the text passes under it */
+#alertsPanel:not([hidden])::after,
+#alertsStatus:not([hidden])::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 9em;
+    background:
+        url("wordmark-white.svg") center / auto calc(var(--ticker-h) * 0.58) no-repeat,
+        linear-gradient(to bottom, #e02d36, #9c1119);
+    clip-path: polygon(1em 0, 100% 0, 100% 100%, 0 100%);
+}
+
+#alertsPanel h2 {
+    position: relative;
+    z-index: 1; /* the text slides under it */
+    flex: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0 1.4em 0 0.8em;
+    background: linear-gradient(to bottom, #f0353d, #a8121a);
+    color: #ffffff;
+}
+#alertsPanel.alert-active h2 { animation: alert-tag 1s ease-in-out infinite alternate; }
+@keyframes alert-tag { to { background: #7d0b11; } }
+
+#alerts {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 4em;
+    padding-left: 100%;
+    white-space: nowrap;
+    font-size: 1.2rem;
+    animation: crawl calc(10s + var(--alert-chars, 80) * 0.18s) linear infinite;
+}
+@keyframes crawl { to { translate: -100% 0; } }
+
+#alerts .alert-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8em;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #ffffff;
+}
+#alerts .alert-item br { display: none; }
+#alerts .alert-item::before {
+    content: "";
+    align-self: center;
+    width: 0.55em;
+    aspect-ratio: 1;
+    rotate: 45deg;
+    background: var(--accent);
+}
+#alerts .alert-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+}
+#alerts .severity-severe .alert-title,
+#alerts .severity-extreme .alert-title { color: #ff6b6b; }
+#alerts .alert-description { color: #ffffff; }
+#alerts .alert-expires { color: var(--text-dim); }
+
+/* No alerts: a quiet, still line in the same bar. The tag and text are dim, nothing moves. */
+#alertsPanel:not(:has(.alert-item)) h2 {
+    background: none;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    padding-right: 0.4em;
+    opacity: 0.8;
+}
+#alertsPanel:not(:has(.alert-item)) #alerts,
+#alertsStatus:not([hidden]) {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+}
+#alertsPanel:not(:has(.alert-item)) #alerts {
+    animation: none;
+    padding-left: 0;
+    opacity: 0.8;
+}
+#alertsStatus:not([hidden]) {
+    align-items: center;
+    padding-left: 1.2em;
+    text-align: left;
+    opacity: 0.8;
+}
+#alertsPanel:not(:has(.alert-item)),
+#alertsStatus:not([hidden]) { border-top-color: rgba(140, 190, 255, 0.35); }
+
+/* The theme button sits just above the ticker */
+.theme-button { bottom: calc(var(--ticker-h) * var(--fit-scale, 1) + 12px); }
+
+footer {
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+}
+
+/* ---- Before the first weather arrives, or when there is none: a station slate ----------- */
+body::after {
+    content: "Weather update \2022  Please stand by";
+    position: fixed;
+    inset: 0;
+    z-index: 39; /* over the page and the ticker */
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+    padding-top: min(30vh, 26vw);
+    color: var(--accent);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 700;
+    font-size: clamp(1rem, 3vw, 2rem);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background:
+        url("wordmark-white.svg") center calc(50% - min(4vh, 4vw)) / auto min(18vh, 16vw) no-repeat,
+        linear-gradient(115deg, transparent 35%, rgba(120, 180, 255, 0.12) 50%, transparent 65%),
+        radial-gradient(ellipse at 50% 40%, #1a4f9f, transparent 70%),
+        linear-gradient(to bottom, #0b2a64, var(--bg));
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease 0.6s, visibility 0s linear 1.2s;
+}
+:root[data-signal="waiting"] body::after,
+:root[data-signal="offline"] body::after {
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+}
+
+/* ---- Landscape: header in one row; portrait: stacked ------------------------------------- */
+@media (orientation: portrait), (max-width: 699px) {
+    .header { justify-content: center; text-align: center; padding-bottom: 10px; }
+    .title { flex-basis: 100%; clip-path: none; }
+    .header .subtitle { margin: 0; padding: 0; flex-basis: 100%; }
+}
+/* Narrow screens: a slimmer logo and tag, so more of the ticker shows. The page scrolls here, so it
+   ends with room for the theme button, which then never covers the last forecast day. */
+@media (max-width: 600px) {
+    :root { --frame-inset-bottom: calc(var(--ticker-h) * var(--fit-scale, 1) + 56px); }
+    #alertsPanel:not([hidden])::after,
+    #alertsStatus:not([hidden])::after { width: 6em; }
+    #alertsPanel h2 { padding: 0 1em 0 0.5em; font-size: 1.1rem; }
+}
+
+/* Reduced effects: no crawl; the alerts sit still and wrap. The bar's height then depends on the
+   alerts, so it goes back into the page (above the footer) instead of being pinned to the bottom,
+   and the page makes room for it whatever its height. */
+:root[data-effects="reduced"]:has(#alertsPanel:not([hidden])) { --frame-inset-bottom: 0px; }
+:root[data-effects="reduced"]:has(#alertsPanel:not([hidden])) .theme-button { bottom: 12px; }
+:root[data-effects="reduced"] #alertsPanel:not([hidden]) {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    height: auto;
+    min-height: var(--ticker-h);
+    margin-bottom: 14px;
+}
+@media (max-width: 600px) {
+    :root[data-effects="reduced"]:has(#alertsPanel:not([hidden])) { --frame-inset-bottom: 56px; }
+}
+:root[data-effects="reduced"] #alerts {
+    flex: 1;
+    padding: 6px 10em 6px 12px;
+    white-space: normal;
+    flex-wrap: wrap;
+    gap: 0.4em 2em;
+}

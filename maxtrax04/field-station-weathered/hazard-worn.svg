@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="32" viewBox="0 0 96 32">
+  <title>Field Station Weathered hazard stripes (tile)</title>
+  <rect width="96" height="32" fill="#e3b02b"/>
+  <path fill="#1c1b16" d="M0 0H8L-24 32H-32ZM16 0H24L-8 32H-16ZM32 0H40L8 32H0ZM48 0H56L24 32H16ZM64 0H72L40 32H32ZM80 0H88L56 32H48ZM96 0H104L72 32H64ZM112 0H120L88 32H80ZM128 0H136L104 32H96Z"/>
+  <g fill="#77786a" fill-opacity="0.7">
+    <path d="M6 20L11 18L13 22L8 25Z M41 4L47 3L46 7L42 8Z M70 24L77 22L79 27L72 28Z M88 9L92 8L93 12L89 13Z"/>
+  </g>
+  <g fill="none" stroke="#efe9cf" stroke-opacity="0.45" stroke-width="0.6" stroke-linecap="round">
+    <path d="M2 10L30 14M50 26L84 20M58 6L74 9"/>
+  </g>
+</svg>

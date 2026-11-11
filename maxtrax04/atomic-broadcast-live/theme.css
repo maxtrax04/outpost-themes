@@ -1,0 +1,71 @@
+/* Atomic Broadcast Live: Atomic Broadcast as one on-air picture, without boxes */
+@import url("../../atomic-broadcast/theme.css");
+
+/* ---- One picture: the panels lose their boxes and sit on the screen --------------------- */
+body {
+    background:
+        radial-gradient(ellipse 55% 45% at 30% 45%, rgba(95, 196, 180, 0.14), transparent 70%),
+        radial-gradient(ellipse at 50% 30%, rgba(79, 179, 165, 0.10), transparent 60%),
+        var(--bg);
+}
+.panel {
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 6px 18px;
+    margin-bottom: 8px;
+}
+
+/* Section titles: teal lettering with the starburst, no pill */
+h2 {
+    background: none;
+    padding: 0;
+    color: var(--accent);
+    letter-spacing: 0.18em;
+    font-size: 1.15em;
+}
+h2::before { background-image: url("../../atomic-broadcast/starburst-teal.svg"); }
+
+/* ---- Now: the readings as a list, each with its tuning scale ------------------------------ */
+.temperature { text-shadow: 3px 4px 0 rgba(0, 0, 0, 0.45), var(--text-glow); }
+.details { gap: 2px 26px; }
+.detail-box {
+    border: 0;
+    border-radius: 0;
+    background: none;
+    padding: 6px 0 34px;
+}
+.detail-box { color: var(--text-dim); font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.detail-box span {
+    display: inline-block;
+    margin-top: 2px;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+}
+.detail-box[data-gauge]:not([data-missing])::before { left: 0; right: 0; }
+.detail-box[data-gauge]:not([data-missing])::after { left: calc(var(--value) * 100% - 1.5px); }
+.detail-box:not([data-gauge]) { padding-bottom: 8px; border-bottom: 1px dashed rgba(95, 196, 180, 0.3); }
+
+/* ---- Forecast: days side by side, divided by fine teal lines ----------------------------- */
+.forecast { gap: 0; }
+.forecast-card {
+    border: 0;
+    border-left: 1px dashed rgba(95, 196, 180, 0.35);
+    border-radius: 0;
+    background: none;
+}
+.forecast-card:first-child { border-left: 0; }
+.forecast-day { color: var(--accent); font-family: var(--font-display); font-size: 1.15rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.forecast-temps { font-family: var(--font-display); font-size: 1.9rem; color: var(--text); margin-top: 4px; }
+.forecast-extra { color: var(--text-dim); font-size: 0.9rem; }
+.forecast-card::after { left: 20%; width: calc(var(--wx-rain, 0) * 60%); height: 4px; border-radius: 2px; }
+
+@media (orientation: portrait), (max-width: 699px) {
+    .forecast-card { border-left: 0; border-top: 1px dashed rgba(95, 196, 180, 0.35); }
+    .forecast-card:first-child { border-top: 0; }
+    .forecast-card::after { left: 0; width: calc(var(--wx-rain, 0) * 100%); }
+}

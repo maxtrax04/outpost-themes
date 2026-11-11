@@ -1,0 +1,49 @@
+name: Check themes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  rules:
+    name: Folder and file rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check every theme against CONTRIBUTING.md
+        run: python3 .github/scripts/check_themes.py
+
+  browser:
+    name: Themes load in Outpost
+    needs: rules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The newest Outpost (edge), with this repository as its custom themes folder and sample alerts
+      - name: Start Outpost
+        run: |
+          docker run -d --name outpost -p 8088:80 \
+            -e OUTPOST_PROVIDER=mock -e OUTPOST_MOCK_ALERTS=true \
+            -v "$PWD:/config/themes:ro" \
+            ghcr.io/maxtrax04/outpost:edge
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://localhost:8088/data/config.json >/dev/null 2>&1; then break; fi
+            sleep 2
+          done
+          docker logs outpost
+
+      # Outpost's own browser check: every theme on a wide screen and a phone, under the real security
+      # headers, failing on any missing file, blocked request, or script error
+      - name: Load every theme in a browser
+        run: |
+          mkdir -p browser
+          curl -fsSL -o browser/check-themes.js https://raw.githubusercontent.com/maxtrax04/outpost/main/tests/browser/check-themes.js
+          docker run --rm --network host -v "$PWD/browser:/work" -w /work \
+            -e OUTPOST_URL=http://localhost:8088 \
+            mcr.microsoft.com/playwright:v1.49.1-noble \
+            sh -c "npm install --silent --no-save playwright@1.49.1 && node check-themes.js"

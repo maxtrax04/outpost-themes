@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="76" viewBox="0 0 120 76">
+  <title>Field Station Weathered dial grime (overlay)</title>
+  <defs>
+    <radialGradient id="grime" cx="0.5" cy="0.95" r="0.62">
+      <stop offset="0.55" stop-color="#5a4a22" stop-opacity="0"/><stop offset="1" stop-color="#4a3a18" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="stain" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#7a5a26" stop-opacity="0.35"/><stop offset="1" stop-color="#7a5a26" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="face"><path d="M9 66A51 51 0 0 1 111 66Z"/></clipPath>
+  </defs>
+  <g clip-path="url(#face)">
+    <path fill="url(#grime)" d="M0 0H120V76H0Z"/>
+    <ellipse cx="88" cy="30" rx="14" ry="9" fill="url(#stain)"/>
+    <ellipse cx="30" cy="52" rx="9" ry="6" fill="url(#stain)"/>
+    <path fill="none" stroke="#ffffff" stroke-opacity="0.55" stroke-width="0.5" d="M70 17L76 27L74 33L81 41M76 27L84 25"/>
+    <g fill="#3a2e14" fill-opacity="0.5"><circle cx="44" cy="30" r="0.6"/><circle cx="47" cy="33" r="0.4"/><circle cx="66" cy="48" r="0.5"/></g>
+  </g>
+  <path fill="#6b3a17" fill-opacity="0.6" d="M4 70Q6 67 9 68L8 74H4Z M112 68Q116 69 116 73H112Z"/>
+</svg>

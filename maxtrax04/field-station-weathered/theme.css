@@ -1,0 +1,14 @@
+/* Field Station Weathered: Field Station after years outdoors (chipped paint, scratches, rust) */
+@import url("../../field-station/theme.css");
+
+.panel { border-image-source: url("bezel-worn.svg"); }
+h2 { border-image-source: url("plate-worn.svg"); }
+
+/* Grime over every dial face */
+.detail-box[data-gauge]:not([data-missing])::before { background-image: url("dial-grime.svg"), url("../../field-station/dial.svg"); }
+.detail-box[data-metric="uv"][data-gauge]:not([data-missing])::before { background-image: url("dial-grime.svg"), url("../../field-station/dial-uv.svg"); }
+.detail-box[data-metric="visibility"][data-gauge]:not([data-missing])::before { background-image: url("dial-grime.svg"), url("../../field-station/dial-vis.svg"); }
+.detail-box[data-metric="pressure"][data-gauge]:not([data-missing])::before { background-image: url("dial-grime.svg"), url("../../field-station/dial-baro.svg"); }
+
+.panel.alert::before,
+.panel.alert::after { background: url("hazard-worn.svg") 0 0 / 72px 24px repeat-x; }

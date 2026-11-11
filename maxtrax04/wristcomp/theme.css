@@ -1,0 +1,354 @@
+/* Wristcomp: a rugged wrist-mounted field computer with a green phosphor screen */
+:root {
+    --bg: #03130a;
+    --bg-glow: rgba(60, 200, 110, 0.10);
+    --panel: transparent;
+    --cell-bg: transparent;
+
+    --text: #74ff9e;
+    --text-dim: #3f9e63;
+    --accent: #b6ffcd;
+    --warn: #d8ff74;
+    --danger: #ff8f6b;
+    --danger-bg: rgba(116, 255, 158, 0.08);
+
+    --border: #2f7a4a;
+    --border-width: 2px;
+    --radius: 0;
+
+    --text-glow: 0 0 6px rgba(116, 255, 158, 0.55);
+    --icon-glow: drop-shadow(0 0 5px rgba(116, 255, 158, 0.55));
+    --scanlines: 1;
+
+    --font-display: "Share Tech Mono", "Courier New", monospace;
+    --font-body: "Share Tech Mono", "Courier New", monospace;
+    --title-spacing: 0.14em;
+    --title-logo: 1;
+
+    /* The housing: --dev is the size of its slices; the visible side bands are 0.5 of that,
+       the top and bottom bands 0.7 */
+    --dev: 80px;
+    --frame-inset: calc(var(--dev) * 0.55);
+    --ticker-h: 40px;
+    --frame-inset-bottom: calc(var(--dev) * 0.7 + (var(--ticker-h) + 10px) * var(--fit-scale, 1));
+
+    /* One screen: fit the page to the display and use its full width */
+    --fit-screen: 1;
+    --fit-width: 100vw;
+    --fit-max-scale: 2.5;
+}
+
+body {
+    background: radial-gradient(ellipse at 50% 45%, rgba(60, 200, 110, 0.12), transparent 65%), var(--bg);
+}
+
+/* ---- The housing around the whole screen ------------------------------------------------ */
+.frame {
+    border-style: solid;
+    border-color: transparent;
+    border-width: var(--dev);
+    /* top and bottom edges stretch; the side edges (with the grip ridges) repeat */
+    border-image: url("housing.svg") 80 / var(--dev) stretch round;
+    /* The glass: darker toward the corners (the rolling band is Outpost's own, under the housing) */
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0, 0, 0, 0.55));
+    /* Measure the glass from the frame's outer edge, not inside the housing slices, so the shading
+       reaches the gasket on every side (the housing covers whatever is beyond it) */
+    background-origin: border-box;
+}
+/* The maker's plate on the top band */
+.frame::before {
+    content: "OUTPOST INSTRUMENTS \2022  FIELD UNIT OW-77";
+    position: absolute;
+    top: calc(var(--dev) * -0.66);
+    left: 50%;
+    translate: -50% 0;
+    padding: 2px 12px;
+    border-radius: 3px;
+    background: linear-gradient(to bottom, #b9baa2, #85876f);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.6);
+    color: #2a2c21;
+    font-family: var(--font-body);
+    font-size: calc(var(--dev) * 0.15);
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+}
+/* Status lights on the top band: data (green, amber when the data is old, off with no data),
+   and alert (red, lit for a severe alert) */
+.frame::after {
+    content: "";
+    position: absolute;
+    top: calc(var(--dev) * -0.6);
+    right: calc(var(--dev) * 0.4);
+    width: calc(var(--dev) * 0.62);
+    height: calc(var(--dev) * 0.24);
+    border-radius: 999px;
+    --data-led: #1d3a25;
+    --alert-led: #3a1d17;
+    background:
+        radial-gradient(circle at 25% 50%, var(--data-led) 0 28%, #11120d 32% 40%, transparent 42%),
+        radial-gradient(circle at 75% 50%, var(--alert-led) 0 28%, #11120d 32% 40%, transparent 42%),
+        #2a2d22;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.7);
+}
+:root[data-signal="ok"] .frame::after { --data-led: #7dffa4; }
+:root[data-signal="degraded"] .frame::after { --data-led: #ffc94a; }
+:root:has(#alertsPanel.alert-active:not([hidden])) .frame::after {
+    --alert-led: #ff5a3c;
+    animation: led 0.9s steps(2, jump-none) infinite;
+}
+@keyframes led { 50% { --alert-led: #5a2016; } }
+
+/* ---- The screen: one picture, no boxes ------------------------------------------------------ */
+.panel {
+    background: none;
+    border: 0;
+    padding: 4px 16px;
+    margin-bottom: 10px;
+}
+
+/* Section titles on a bracketed rule: ┌─ FORECAST ─────────┐ */
+h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    margin: 0 0 10px;
+    font-size: 1.1rem;
+    letter-spacing: 0.22em;
+    color: var(--text);
+    text-shadow: var(--text-glow);
+}
+h2::before,
+h2::after {
+    content: "";
+    height: 0.9em;
+    translate: 0 0.45em;
+    border-top: 2px solid var(--text-dim);
+}
+h2::before { width: 14px; border-left: 2px solid var(--text-dim); }
+h2::after { flex: 1; border-right: 2px solid var(--text-dim); }
+
+/* Header: logo and place in a row, over a bracketed rule */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0 1em;
+    flex-wrap: wrap;
+    padding-bottom: 18px;
+}
+.header .title-logo { height: clamp(2.6rem, 6vw, 4.2rem); }
+.header .location { margin: 0; color: var(--accent); text-shadow: var(--text-glow); }
+.header .subtitle { flex-basis: 100%; text-align: center; }
+.header::after {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 4px;
+    height: 8px;
+    border: 2px solid var(--text-dim);
+    border-bottom: 0;
+}
+
+/* Now: the temperature large, the condition in inverse video */
+.temperature { text-shadow: var(--text-glow); }
+.condition {
+    display: inline-block;
+    margin-top: 0.3em;
+    padding: 0 0.4em;
+    background: var(--text);
+    color: var(--bg);
+    text-shadow: none;
+    text-transform: uppercase;
+    font-size: clamp(1.2rem, 2.6vw, 2rem);
+    box-shadow: 0 0 10px rgba(116, 255, 158, 0.45);
+}
+
+/* Readings: a label, the value, and a segmented bar meter */
+.details { gap: 4px 26px; }
+.detail-box {
+    border: 0;
+    background: none;
+    padding: 4px 0 8px;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+.detail-box span {
+    display: inline-block;
+    color: var(--text);
+    font-size: 1.4rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    text-shadow: var(--text-glow);
+}
+.detail-box[data-gauge]:not([data-missing]) { padding-bottom: 20px; }
+.detail-box[data-gauge]:not([data-missing])::before,
+.detail-box[data-gauge]:not([data-missing])::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 6px;
+    height: 8px;
+    background: repeating-linear-gradient(to right, var(--seg) 0 6px, transparent 6px 9px);
+}
+.detail-box[data-gauge]:not([data-missing])::before { right: 0; --seg: rgba(116, 255, 158, 0.16); }
+.detail-box[data-gauge]:not([data-missing])::after {
+    width: calc(var(--value) * 100%);
+    --seg: var(--text);
+    filter: drop-shadow(0 0 3px rgba(116, 255, 158, 0.6));
+    transition: width 1s ease-in-out;
+}
+
+/* Forecast: days side by side, divided by dotted lines */
+.forecast { gap: 0; }
+.forecast-card {
+    border: 0;
+    border-left: 2px dotted var(--border);
+    background: none;
+    padding: 4px 6px 10px;
+}
+.forecast-card:first-child { border-left: 0; }
+.forecast-day { color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; }
+.forecast-condition { color: var(--text-dim); }
+.forecast-temps { font-size: 1.7rem; text-shadow: var(--text-glow); }
+.forecast-extra { color: var(--text-dim); font-size: 0.9rem; }
+
+/* Outpost's data warning: inverse video */
+.panel.alert {
+    border: 2px solid var(--text);
+    background: var(--danger-bg);
+    color: var(--text);
+}
+.panel.alert::before { content: "[!] "; }
+
+/* ---- The ticker along the bottom of the screen -------------------------------------------
+   Alerts slide past behind an inverse "ALERT" tag. With none, the same strip holds a dim, still
+   line (the panel's "no alerts" text or the one-line note). Sizes are divided by --fit-scale
+   because the page is scaled. */
+#alertsPanel:not([hidden]),
+#alertsStatus:not([hidden]) {
+    position: fixed;
+    z-index: 38;
+    left: calc((var(--dev) * 0.5 + 20px) / var(--fit-scale, 1));
+    right: calc((var(--dev) * 0.5 + 20px) / var(--fit-scale, 1));
+    bottom: calc((var(--dev) * 0.7 + 10px) / var(--fit-scale, 1));
+    height: var(--ticker-h);
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-top: 2px solid var(--text-dim);
+    background: rgba(3, 19, 10, 0.94);
+}
+#alertsPanel h2 {
+    position: relative;
+    z-index: 1;
+    flex: none;
+    margin: 0;
+    padding: 0 0.8em;
+    background: var(--text);
+    color: var(--bg);
+    text-shadow: none;
+}
+#alertsPanel h2::before,
+#alertsPanel h2::after { content: none; }
+#alertsPanel.alert-active h2 { animation: blink 1s steps(2, jump-none) infinite; }
+@keyframes blink { 50% { background: var(--text-dim); } }
+
+#alerts {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 4em;
+    padding-left: 100%;
+    white-space: nowrap;
+    font-size: 1.1rem;
+    animation: crawl calc(10s + var(--alert-chars, 80) * 0.18s) linear infinite;
+}
+@keyframes crawl { to { translate: -100% 0; } }
+#alerts .alert-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8em;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text);
+}
+#alerts .alert-item br { display: none; }
+#alerts .alert-item::before { content: ">>"; color: var(--text-dim); }
+#alerts .alert-title { color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; }
+#alerts .severity-severe .alert-title,
+#alerts .severity-extreme .alert-title { color: var(--danger); }
+#alerts .alert-expires { color: var(--text-dim); }
+
+/* No alerts: dim and still */
+#alertsPanel:not(:has(.alert-item)) h2 { background: none; color: var(--text-dim); padding-right: 0.2em; }
+#alertsPanel:not(:has(.alert-item)) #alerts { animation: none; padding-left: 0; color: var(--text-dim); font-size: 0.95rem; }
+#alertsStatus:not([hidden]) {
+    align-items: center;
+    padding-left: 0.8em;
+    text-align: left;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+}
+#alertsPanel:not(:has(.alert-item)),
+#alertsStatus:not([hidden]) { border-top-color: rgba(63, 158, 99, 0.45); }
+
+/* ---- Start-up self-test while waiting for data, or when there is none ------------------------ */
+body::after {
+    content: "OUTPOST FIELD UNIT  OW-77\A\A MEMORY CHECK ....... OK\A DISPLAY ............ OK\A SENSOR LINK ........ STANDBY\A\A AWAITING TELEMETRY_";
+    position: fixed;
+    inset: 0;
+    z-index: 39; /* over the page, under the scanlines and housing */
+    pointer-events: none;
+    display: grid;
+    place-content: center;
+    white-space: pre;
+    background: var(--bg);
+    color: var(--text);
+    text-shadow: var(--text-glow);
+    font-family: var(--font-body);
+    font-size: clamp(0.9rem, 2.4vw, 1.6rem);
+    line-height: 1.5;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s steps(4) 0.6s, visibility 0s linear 1s;
+}
+:root[data-signal="waiting"] body::after,
+:root[data-signal="offline"] body::after {
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+}
+:root[data-signal="offline"] body::after {
+    content: "OUTPOST FIELD UNIT  OW-77\A\A MEMORY CHECK ....... OK\A DISPLAY ............ OK\A SENSOR LINK ........ NO SIGNAL\A\A RETRYING_";
+}
+
+/* ---- Smaller screens: a slimmer housing ------------------------------------------------------- */
+@media (max-width: 850px) {
+    :root { --dev: 64px; }
+}
+@media (max-height: 700px) {
+    :root { --dev: 56px; }
+}
+@media (max-width: 600px) {
+    :root { --dev: 44px; }
+    .frame::before { font-size: 8px; letter-spacing: 0.1em; }
+    .detail-box span { font-size: 1.15rem; }
+}
+
+/* Reduced effects: Outpost already removes the rolling band and stops the blinking and crawl; let the alerts wrap */
+:root[data-effects="reduced"] #alertsPanel:not([hidden]) { height: auto; min-height: var(--ticker-h); }
+:root[data-effects="reduced"] #alerts {
+    flex: 1;
+    padding: 6px 12px;
+    white-space: normal;
+    flex-wrap: wrap;
+    gap: 0.4em 2em;
+}
