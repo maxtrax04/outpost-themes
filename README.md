@@ -27,7 +27,7 @@ brings that one along.
 
 Every theme then shows in the theme button, under the same names.
 
-Community themes need Outpost 0.5.0-beta.8 or later. See "Community themes" in the
+Community themes need Outpost 0.5.0 or later. See "Community themes" in the
 [Outpost README](https://github.com/maxtrax04/outpost#community-themes).
 
 ## Available themes

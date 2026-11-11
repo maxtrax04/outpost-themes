@@ -18,4 +18,4 @@ A rugged wrist-mounted field computer. The dashboard sits on a green phosphor sc
 OUTPOST_COMMUNITY_THEMES=maxtrax04/wristcomp
 ```
 
-Then pick **Wristcomp** with the theme button, or set `OUTPOST_THEME=maxtrax04/wristcomp`. Needs Outpost 0.5.0-beta.8 or later.
+Then pick **Wristcomp** with the theme button, or set `OUTPOST_THEME=maxtrax04/wristcomp`. Needs Outpost 0.5.0 or later.

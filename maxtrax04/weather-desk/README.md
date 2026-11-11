@@ -15,4 +15,4 @@ The forecast segment of a local evening newscast. A blue studio background with 
 OUTPOST_COMMUNITY_THEMES=maxtrax04/weather-desk
 ```
 
-Then pick **Weather Desk** with the theme button, or set `OUTPOST_THEME=maxtrax04/weather-desk`. Needs Outpost 0.5.0-beta.8 or later.
+Then pick **Weather Desk** with the theme button, or set `OUTPOST_THEME=maxtrax04/weather-desk`. Needs Outpost 0.5.0 or later.

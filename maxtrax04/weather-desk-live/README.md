@@ -10,4 +10,4 @@
 OUTPOST_COMMUNITY_THEMES=maxtrax04/weather-desk-live
 ```
 
-Then pick **Weather Desk Live** with the theme button, or set `OUTPOST_THEME=maxtrax04/weather-desk-live`. It builds on `maxtrax04/weather-desk`, which Outpost downloads along with it. Needs Outpost 0.5.0-beta.8 or later.
+Then pick **Weather Desk Live** with the theme button, or set `OUTPOST_THEME=maxtrax04/weather-desk-live`. It builds on `maxtrax04/weather-desk`, which Outpost downloads along with it. Needs Outpost 0.5.0 or later.

@@ -10,4 +10,4 @@ Outpost's built-in **Field Station** theme (a riveted steel instrument panel) af
 OUTPOST_COMMUNITY_THEMES=maxtrax04/field-station-weathered
 ```
 
-Then pick **Field Station Weathered** with the theme button, or set `OUTPOST_THEME=maxtrax04/field-station-weathered`. It builds on the built-in `field-station` theme. Needs Outpost 0.5.0-beta.8 or later.
+Then pick **Field Station Weathered** with the theme button, or set `OUTPOST_THEME=maxtrax04/field-station-weathered`. It builds on the built-in `field-station` theme. Needs Outpost 0.5.0 or later.
